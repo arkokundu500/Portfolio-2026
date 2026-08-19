@@ -1,0 +1,59 @@
+🚀 Weekly Project Challenge — Week 2 Update! 🚀
+
+I'm excited to share my progress for Week 2 of the Weekly Project Challenge: building and refining my personal developer portfolio, "Tactile Terminal" — an editorial, dark-mode personal workstation and work archive built from screen to server.
+
+Rather than a conventional cookie-cutter portfolio template, I designed and engineered a tactile, system-record experience featuring spatial interactions, typed client-server architecture, and in-browser document rendering.
+
+Here is a breakdown of what was built, the architecture behind it, and key takeaways from Week 2! 🧵👇
+
+---
+
+✨ Key Features
+
+🔹 Tactile Hero & Physics-Based Draggable Note:
+An interactive, bounded draggable hero artifact powered by GSAP + Draggable, offering tactile desktop interactions while respecting system-level `prefers-reduced-motion` accessibility.
+
+🔹 Interactive Project Archive & System Records:
+Curated case study showcases styled with coordinate labels, component grid overlays, tech stack tags, and deep-dive modal views.
+
+🔹 In-Browser PDF Résumé Viewer:
+A live, dynamic PDF document rendered natively inside the browser using `@react-pdf/renderer` — allowing recruiters and visitors to inspect my CV without navigating away or downloading static snapshots.
+
+🔹 Type-Safe Contact Composer with Resend:
+A fully accessible message composer modal connected via tRPC mutations and Zod schema validation. Sends formatted emails directly to my inbox with automated reply-to configuration using Resend API.
+
+🔹 Live Workstation Status Rail:
+An ambient desktop navigation rail featuring live real-time status, active section tracking, and responsive layout adaptations.
+
+---
+
+🛠️ Tech Stack
+
+• Frontend: React 19, TypeScript, Tailwind CSS 4, GSAP (Draggable), Framer Motion, Zustand + Immer, @react-pdf/renderer, Lucide Icons, Sonner.
+• Backend & APIs: Node.js, Express, tRPC (v11), Zod, Resend Email Service, Drizzle ORM.
+• Testing & Build Tools: Vitest, Vite 7, TypeScript 5.9, Prettier.
+
+---
+
+💡 Week 2 Learnings & Insights
+
+1️⃣ End-to-End Type Safety with tRPC & Zod:
+Connecting client mutations directly to server procedures without writing repetitive boilerplate API contracts. TypeScript inference catches shape mismatches at compile-time, while Zod guarantees rigorous runtime validation before payloads hit backend services.
+
+2️⃣ Secure Server-Side Integration & The "Browser Asks, Server Decides" Model:
+Ensuring API credentials (like `RESEND_API_KEY`) remain strictly protected on the backend. Configured a verified sender domain for deliverability while routing the visitor's email to `replyTo` so replies flow seamlessly.
+
+3️⃣ Pragmatic Testing Strategies with Vitest:
+Learned how to test email payload construction using dependency injection and mock mailers, paired with isolated credential checks — validating production readiness without sending test spam to inboxes during CI.
+
+4️⃣ State Boundary Hygiene (useState vs. Zustand):
+Mastered the separation of concerns between localized ephemeral state (`useState` for form fields and modal lifecycle) and global interaction state (`Zustand + Immer` for portfolio-wide UI flags and active project records).
+
+5️⃣ Accessible Interactive Motion:
+Balancing high-polish micro-animations and physics-based drag gestures with accessibility standards, ensuring graceful fallbacks for users with reduced-motion preferences.
+
+---
+
+Huge thanks to everyone following along with the Weekly Project Challenge! Feedback, thoughts, and suggestions are always welcome. Let's keep building! 💻⚡
+
+#WeeklyProjectChallenge #WebDevelopment #ReactJS #TypeScript #FullStack #SoftwareEngineering #Portfolio #BuildInPublic #Frontend #GSAP #tRPC #TailwindCSS #CodingChallenge

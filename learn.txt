@@ -1,0 +1,439 @@
+ARKO KUNDU PORTFOLIO — BEGINNER LEARNING GUIDE
+================================================
+
+Author: Manus AI
+Audience: Beginners who want to understand a modern React + TypeScript portfolio from screen to server.
+
+This guide explains the project in the order a browser, a developer, and an interviewer would encounter it. Read it alongside the source code. The goal is not to memorize every line. The goal is to understand WHY each layer exists, WHAT responsibility it owns, and HOW data moves safely between layers.
+
+----------------------------------------------------------------
+0. THE PROJECT IN ONE MINUTE
+----------------------------------------------------------------
+
+This project is a portfolio website for a software developer named Arko Kundu. The visible interface includes a hero section, selected work, achievements, approach, résumé preview, and contact area. It looks like a dark editorial work archive rather than a conventional template.
+
+The project also includes real application behavior:
+
+  1. A visitor can drag the violet hero note.
+  2. A visitor can inspect three project records.
+  3. A visitor can open a résumé preview inside the browser.
+  4. A visitor can open a contact popup and submit a message.
+  5. The server validates the submission and sends it with Resend.
+
+IMPORTANT: A frontend interface and a backend integration are different things. The frontend is what a visitor sees. The backend is the protected part that can safely use secrets such as an email API key.
+
+----------------------------------------------------------------
+1. START WITH THE BIG PICTURE
+----------------------------------------------------------------
+
+The application has two halves:
+
+    Browser (client)                         Server
+    ----------------                         ----------------------
+    React components                 -->     tRPC procedure
+    Form state                       -->     Zod validation
+    Buttons and modal                -->     Resend email API
+    GSAP interactions                -->     Secure recipient inbox
+
+The browser must never receive RESEND_API_KEY. If that value entered the browser bundle, any visitor could inspect it and send email through the account. That is why the contact form calls a server procedure instead of calling Resend directly.
+
+IMPORTANT: The safest mental model is “the browser asks; the server decides.” The browser sends user input. The server validates it, attaches trusted configuration, and contacts external services.
+
+----------------------------------------------------------------
+2. REPOSITORY TOUR
+----------------------------------------------------------------
+
+Use this table as a map before opening individual files.
+
+| Path | Role | Beginner takeaway |
+| --- | --- | --- |
+| client/src/pages/Home.tsx | Main portfolio page | Most visible UI logic lives here. |
+| client/src/index.css | Global design language | Colors, layout rules, animation fallbacks, and special visual effects live here. |
+| client/src/main.tsx | Client startup | Creates the React app and tRPC connection. |
+| client/src/App.tsx | App shell | Applies global providers such as theme and tooltips. |
+| server/routers.ts | Server API contract | Defines what the browser is allowed to request. |
+| server/contactEmail.ts | Email service | Builds and sends the actual contact email. |
+| server/contactEmail.test.ts | Email unit test | Checks the email payload without sending a real email. |
+| server/resend.credentials.test.ts | Credential test | Confirms that the configured Resend key can authenticate. |
+| CONTACT_EMAIL_SETUP.md | Setup reference | Documents required email environment variables. |
+| package.json | Commands and dependencies | Explains how the project starts, tests, and builds. |
+
+----------------------------------------------------------------
+3. FIRST-RUN SETUP, STEP BY STEP
+----------------------------------------------------------------
+
+Step 1 — Install Node.js and pnpm.
+
+Node.js runs the development server and build tools. pnpm downloads packages efficiently and respects the project lockfile.
+
+Step 2 — Install packages.
+
+    pnpm install
+
+This reads package.json and installs React, Tailwind, tRPC, Resend, testing tools, and the rest of the stack.
+
+Step 3 — Configure secure email values.
+
+You need these server-side values:
+
+    RESEND_API_KEY
+    RESEND_FROM_EMAIL
+    CONTACT_TO_EMAIL
+
+WARNING: Do NOT write actual secret values into a committed .env file, screenshots, GitHub issues, or client-side code. Configure them through your hosting or project secret manager.
+
+Step 4 — Start development.
+
+    pnpm dev
+
+Step 5 — Check code before sharing it.
+
+    pnpm check
+    pnpm test
+    pnpm build
+
+Each command answers a different question.
+
+| Command | Question it answers |
+| --- | --- |
+| pnpm check | “Does TypeScript understand this code?” |
+| pnpm test | “Do the behaviors we chose to test still work?” |
+| pnpm build | “Can production bundles be generated?” |
+
+----------------------------------------------------------------
+4. REACT: HOW THE PAGE IS BUILT
+----------------------------------------------------------------
+
+React applications are made from components. A component is a JavaScript or TypeScript function that returns JSX markup.[1] JSX resembles HTML, but it can contain JavaScript expressions inside curly braces.
+
+In this project, Home() in client/src/pages/Home.tsx is the largest page-level component. It renders sections such as the hero, work, achievements, approach, footer, résumé dialog, and contact dialog.
+
+Example mental model:
+
+    const projects = [ ... ]
+
+    projects.map((project) => <ProjectCard project={project} />)
+
+The real code maps the project array into repeated visual records. This is better than copying the same markup three times because the data stays in one place. To add a fourth project, you mostly add one data object rather than duplicate a full card.
+
+IMPORTANT: In React lists, each repeated element needs a stable key. The project number is used as an identifier so React can distinguish one project record from another when the UI updates.[1]
+
+----------------------------------------------------------------
+5. LOCAL STATE VS GLOBAL STATE
+----------------------------------------------------------------
+
+State is information that can change while a visitor uses the site. React’s useState hook is ideal for state local to one component, such as:
+
+    contactOpen          Is the contact popup open?
+    contactDraft         What has the visitor typed?
+    messageSent          Did the API report success?
+    now                  What time should the status rail display?
+
+The project also uses Zustand with Immer for small shared portfolio state. The Zustand store owns:
+
+    activeProject        Which project is currently highlighted?
+    resumeOpen           Is the résumé viewer open?
+
+Zustand stores are hooks. Components can select state and actions from the store without manually creating a React context provider.[4]
+
+WHY IMMER?
+
+Immer lets code look like it is mutating an object while it safely creates an immutable next state. For example, writing state.activeProject = project inside the store update is easier to read than manually cloning nested objects.
+
+RULE OF THUMB:
+
+| Choose | When |
+| --- | --- |
+| useState | The state belongs to one component or one closely related UI region. |
+| Zustand | Several components need the same state or actions. |
+| Server/database | The data must survive a refresh or be shared between users. |
+
+----------------------------------------------------------------
+6. STYLING: TAILWIND PLUS CUSTOM CSS
+----------------------------------------------------------------
+
+Tailwind CSS generates static CSS from class names found in project templates.[2] That is why you see utility classes such as:
+
+    px-5                 horizontal padding
+    border-white/10      a subtle border
+    text-[#a78bfa]       Orbit Violet text
+    lg:grid-cols-3       three columns on large screens
+
+The project also needs design rules that would be awkward to repeat inside every JSX element. Those rules live in client/src/index.css. Examples include:
+
+    .main-rail           fixed desktop navigation rail
+    .project-frame       image overlay and hover behavior
+    .section-axis         the continuous workstation index line
+    .orbit-note          drag-friendly cursor treatment
+
+IMPORTANT: The project uses a dark background and light text. Whenever you introduce a new background color, verify the text remains readable. Visual polish does not replace contrast.
+
+----------------------------------------------------------------
+7. ANIMATION AND THE DRAGGABLE HERO NOTE
+----------------------------------------------------------------
+
+GSAP provides animation primitives. This project uses it in two ways:
+
+  1. Intro elements fade and rise into place when the page loads.
+  2. The violet hero note can be dragged inside the hero stage.
+
+The relevant conceptual code is:
+
+    gsap.registerPlugin(Draggable)
+
+    Draggable.create(orbitNote, {
+      bounds: "#hero-stage",
+      inertia: true,
+    })
+
+The bounds option keeps the draggable note inside the hero area. GSAP’s Draggable plugin supports mouse and touch dragging, and can be configured with bounds and inertia.[3]
+
+IMPORTANT: The project checks prefers-reduced-motion before starting nonessential entrance animation. This respects visitors who ask their operating system to reduce motion.
+
+----------------------------------------------------------------
+8. THE IN-BROWSER RÉSUMÉ
+----------------------------------------------------------------
+
+The résumé is not a screenshot or a remote file. It is a React document declared with primitives such as Document, Page, View, and Text. React-pdf can render such a document in the browser using PDFViewer.[5]
+
+This provides two advantages:
+
+  1. The visual résumé can be updated in source code.
+  2. The visitor does not need to leave the portfolio to view it.
+
+When you change résumé content, update the ResumeDocument component in Home.tsx. Then open the résumé modal in the browser and check line wrapping, typography, and page overflow.
+
+----------------------------------------------------------------
+9. THE CONTACT POPUP, STEP BY STEP
+----------------------------------------------------------------
+
+The contact flow is the most important full-stack feature in this project.
+
+Step 1 — Opening the popup.
+
+The footer’s “WRITE A MESSAGE” button calls openContactComposer(). That function clears old request errors, resets the success flag, and opens the modal.
+
+Step 2 — Collecting visitor input.
+
+The popup contains controlled inputs for name, email, subject, and message. “Controlled” means React state owns the current field values. Every onChange event updates contactDraft.
+
+Step 3 — Submitting to the server.
+
+When the form is submitted, handleContactSubmit prevents the browser’s default page reload and calls:
+
+    contactMutation.mutate(contactDraft)
+
+This is a tRPC mutation. tRPC uses TypeScript inference to connect the client call to a server procedure, reducing the risk that client and server disagree about input or output shapes.[6]
+
+Step 4 — Validating input.
+
+server/routers.ts validates the input using a Zod object. It requires:
+
+| Field | Rule |
+| --- | --- |
+| name | 2–100 trimmed characters |
+| email | Valid email format, maximum 320 characters |
+| subject | 3–160 trimmed characters |
+| message | 10–3,000 trimmed characters |
+
+Zod is a TypeScript-first schema validation library. It validates untrusted input against a declared schema.[7]
+
+Step 5 — Sending email securely.
+
+After validation passes, the router calls sendContactMessage() in server/contactEmail.ts. That file reads the three server-side configuration values, creates a Resend client, sends the message to CONTACT_TO_EMAIL, and uses the visitor email as replyTo.
+
+Step 6 — Showing the outcome.
+
+The UI shows “SENDING…” while the mutation is in progress. If the server returns success, the popup replaces the form with a confirmation. If the server returns an error, the visitor sees a safe retry message instead of an internal provider error.
+
+IMPORTANT SECURITY MARKER:
+
+    Browser sends:       name, email, subject, message
+    Server owns:         Resend API key, sender address, inbox address
+
+The browser NEVER sends an API key. The server NEVER trusts form data without validation.
+
+----------------------------------------------------------------
+10. WHY replyTo MATTERS
+----------------------------------------------------------------
+
+The “from” field tells recipients which verified identity sent the email. Resend needs a configured sender. The “replyTo” field tells the recipient where a reply should go.
+
+This project uses:
+
+    from:    RESEND_FROM_EMAIL
+    to:      CONTACT_TO_EMAIL
+    replyTo: visitor-provided email
+
+That design lets Arko reply directly to a visitor without pretending that the visitor sent the email from Arko’s verified domain.
+
+----------------------------------------------------------------
+11. ERROR HANDLING AND TESTING
+----------------------------------------------------------------
+
+The project tests the email feature without using routine live email sends.
+
+| Test file | What it verifies | Why it is useful |
+| --- | --- | --- |
+| server/contactEmail.test.ts | Correct recipient, sender, reply-to, subject, and body are created. | Prevents a small refactor from silently routing email incorrectly. |
+| server/resend.credentials.test.ts | The configured key can authenticate to a lightweight Resend endpoint. | Detects an invalid or revoked key without delivering a test email. |
+| server/auth.logout.test.ts | Logout clears its session cookie correctly. | Preserves generated authentication behavior. |
+
+IMPORTANT: A passing build does not prove the email will reach an inbox. It proves the code can be bundled. A passing unit test does not prove the provider is configured. That is why this project has both a payload test and a credential test.
+
+----------------------------------------------------------------
+12. COMMON BEGINNER MISTAKES
+----------------------------------------------------------------
+
+Mistake 1 — Putting RESEND_API_KEY in the frontend.
+
+Why it is wrong: Anything sent to the browser can be inspected by visitors. Use a server-only variable.
+
+Mistake 2 — Trusting only HTML required attributes.
+
+Why it is wrong: A malicious or custom client can skip browser validation. Validate again on the server with Zod.
+
+Mistake 3 — Sending real emails from every test run.
+
+Why it is wrong: Tests become slow, noisy, and can create accidental mail. Use mocked tests for message construction and a light credential check for configuration.
+
+Mistake 4 — Calling a state setter during render.
+
+Why it is wrong: Render should describe UI, not cause immediate updates. Use event handlers or effects for changes.
+
+Mistake 5 — Forgetting to clean up GSAP interactions.
+
+Why it is wrong: If an effect creates animation or Draggable instances, clean them up when the component unmounts. This avoids duplicate listeners and stale animation work.
+
+Mistake 6 — Treating a modal as just a visual box.
+
+Why it is wrong: A modal needs a role, label, close action, visible focus behavior, and keyboard-friendly controls. Accessibility is part of functionality.
+
+----------------------------------------------------------------
+13. A SAFE CHANGE WORKFLOW
+----------------------------------------------------------------
+
+Use this repeatable workflow whenever you change the project.
+
+Step A — Decide the ownership.
+
+Ask: Is this a display-only change, local interactive state, shared client state, or server behavior? Put the change in the correct layer.
+
+Step B — Change the smallest correct file set.
+
+For example, if you add a required contact field, update both the form in Home.tsx and the Zod schema in server/routers.ts. If the field should appear in email, update contactEmail.ts too.
+
+Step C — Add or update a test.
+
+If the server behavior changes, write a small unit test that demonstrates the intended result. The best tests explain future maintenance decisions.
+
+Step D — Validate in this order.
+
+    pnpm check
+    pnpm test
+    pnpm build
+
+Step E — Manually inspect the user experience.
+
+Open the portfolio on desktop and mobile. Test focus, close buttons, spacing, error messages, and contrast. Code can be technically correct while the visual experience is still weak.
+
+----------------------------------------------------------------
+14. INTERVIEW QUESTIONS AND MODEL ANSWERS
+----------------------------------------------------------------
+
+Q1. Why did you use React state for the contact form?
+
+Model answer: The contact form is a local UI concern. The current values, whether the modal is open, and whether the request succeeded matter primarily to Home.tsx, so useState is the simplest ownership model. I used Zustand for separate portfolio interactions that benefit from a small reusable store, such as the active project and résumé dialog state.
+
+Q2. What is the difference between a query and a mutation in tRPC?
+
+Model answer: A query reads data and is normally safe to repeat. A mutation changes state or triggers a side effect. The contact form uses a mutation because it sends an email, which is a side effect. tRPC gives the client a typed interface for invoking that server procedure.[6]
+
+Q3. Why validate the contact payload on the server if the browser already has required fields?
+
+Model answer: Browser validation improves usability, but it is not a security boundary. Requests can be created without using the visible form. Server-side Zod validation ensures that every request reaching the mail service satisfies the required type, shape, length, and email rules.[7]
+
+Q4. How do you keep the Resend API key secure?
+
+Model answer: The key is stored as a server-side environment variable and is read only in server/contactEmail.ts. The client calls a tRPC route, so it never receives the key. I would also restrict secrets in the hosting platform, avoid committing them, rotate them if exposed, and add rate limiting for production.
+
+Q5. Why do you use a verified From address and a visitor Reply-To address?
+
+Model answer: The verified From address establishes the sender identity permitted by the email provider. The Reply-To field points to the visitor so Arko can respond directly. This keeps deliverability and reply behavior separate and correct.
+
+Q6. What does the mailer injection in sendContactMessage accomplish?
+
+Model answer: The function accepts an optional mailer, which lets the unit test provide a fake sender. The production path creates a real Resend client, but the test can verify the payload without network calls or accidental email delivery. This is dependency injection in a small, practical form.
+
+Q7. Why use GSAP Draggable rather than manually updating element coordinates with pointer events?
+
+Model answer: Manual dragging requires handling pointer capture, touch behavior, constraints, and cleanup. GSAP Draggable provides a tested abstraction for drag interactions and bounded movement, allowing the implementation to focus on the interaction design.[3]
+
+Q8. How does Tailwind help in this project when there is also a CSS file?
+
+Model answer: Tailwind handles most component-level layout, spacing, type, and responsive utilities directly in JSX. The global CSS file holds reusable visual behavior that would be too repetitive or complex in utility classes, such as the navigation rail, project overlays, and reduced-motion handling. This hybrid approach keeps both component markup and shared design rules understandable.[2]
+
+Q9. What would you improve before a public launch?
+
+Model answer: I would replace placeholder social URLs, add genuine project URLs or case studies, test a real email delivery with the production sender domain, add rate limiting and bot protection such as Turnstile, configure monitoring for email failures, and check keyboard navigation in the contact dialog.
+
+Q10. What is the purpose of pnpm build if pnpm check already passes?
+
+Model answer: Type checking checks TypeScript types, while a production build also runs the bundling pipeline. It catches issues involving module resolution, Vite transforms, asset handling, and production bundle creation. Both are needed because they test different parts of the delivery process.
+
+Q11. What is a controlled input?
+
+Model answer: A controlled input receives its displayed value from React state and updates that state through an event handler. It gives the application one source of truth, which makes validation, resetting after success, and displaying pending or error states straightforward.
+
+Q12. How does this project support a reduced-motion preference?
+
+Model answer: The stylesheet includes a prefers-reduced-motion media query that minimizes nonessential animation and smooth scrolling. The GSAP setup also avoids initiating the entrance animation when the preference asks for reduced motion. This preserves access to content and interaction without forcing movement on every visitor.
+
+----------------------------------------------------------------
+15. NEXT LEARNING EXERCISES
+----------------------------------------------------------------
+
+Exercise 1 — Add a project.
+
+Add a fourth object to the projects array. Give it a distinct title, stack, description, and image. Then check desktop and mobile layouts.
+
+Exercise 2 — Add a “budget range” field.
+
+Add a select field to the popup. Then update the TypeScript state, Zod schema, email body, and mailer test. This exercise teaches you to trace a piece of data through all layers.
+
+Exercise 3 — Add rate limiting.
+
+Research a server-side rate-limit strategy, apply it to the contact mutation, and return a clear message to visitors who submit too often.
+
+Exercise 4 — Split Home.tsx.
+
+Extract the hero, project section, contact composer, and résumé preview into smaller components. Keep their props explicit. This teaches component boundaries and makes future changes easier to review.
+
+----------------------------------------------------------------
+16. FINAL CHECKLIST
+----------------------------------------------------------------
+
+Before you publish, confirm all statements below are true:
+
+  [ ] pnpm check passes.
+  [ ] pnpm test passes.
+  [ ] pnpm build passes.
+  [ ] The sender domain is verified in Resend.
+  [ ] The three email variables are configured as secrets.
+  [ ] The contact popup opens, closes, validates, and reports feedback clearly.
+  [ ] A real test submission arrives in the intended inbox.
+  [ ] Replying to that email reaches the visitor address.
+  [ ] Social links and project details are no longer placeholders.
+  [ ] Desktop and mobile layouts have been reviewed.
+
+REFERENCES
+----------
+
+[1] React, “Quick Start.” https://react.dev/learn
+[2] Tailwind CSS, “Get started with Tailwind CSS.” https://tailwindcss.com/docs
+[3] GSAP, “Draggable documentation.” https://gsap.com/docs/v3/Plugins/Draggable/
+[4] Zustand, “Introduction.” https://zustand.docs.pmnd.rs/getting-started/introduction
+[5] React-pdf, “Quick start guide.” https://react-pdf.org/
+[6] tRPC, “Introduction.” https://trpc.io/docs
+[7] Zod, “Introduction.” https://zod.dev/
+[8] Resend, “Introduction.” https://resend.com/docs/introduction
