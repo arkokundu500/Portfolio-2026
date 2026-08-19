@@ -56,46 +56,49 @@ const projects = [
     title: "RAG Financial Chatbot",
     type: "Access-controlled AI assistant",
     description: "A role-aware chatbot for teams retrieving financial insight from a large internal document library.",
-    stack: ["Python", "FastAPI", "LangChain"],
-    image: "/arko-project-aurora_6854b59d.jpg",
+    stack: ["Python", "FastAPI", "LangChain", "Gemini API", "ChromaDB", "Streamlit"],
+    image: "/Rag_Chatbot.png",
     featured: "5+ departments · 500+ documents · 80% less data-access delay.",
+    link: "https://github.com/arkokundu500/RAG_Chatbot"
   },
   {
     number: "02",
-    year: "2025",
-    title: "Smart Doorbell Verification",
-    type: "Computer vision system",
-    description: "A GAN-assisted facial verification system paired with a real-time Flask web interface.",
-    stack: ["PyTorch", "OpenCV", "Flask"],
-    image: "/arko-project-lattice_47dac939.jpg",
-    featured: "93.32% training accuracy · 91.67% validation accuracy · 1,000-image dataset.",
+    year: "2026",
+    title: "AI Video Assistance",
+    type: "Youtube Video Summarizer and AI Assistant",
+    description: "An AI assistant that can summarize Youtube videos and answer questions about them.",
+    stack: ["Python", "ChromaDB", "Mistral AI", "Sarvam AI", "Open AI Whisper", "yt-dlp", "Langchain", "Streamlit"],
+    image: "/ai_video_assistant_rag.png",
+    featured: "Process Hindi Audio Youtube Videos · AI Assistant · RAG based Q/A system · Chunking system.",
+    link: "https://github.com/arkokundu500/AI-Video-Assistant"
   },
   {
     number: "03",
     year: "2025",
     title: "INTERV-AK",
     type: "Remote interview platform",
-    description: "A secure, real-time video interviewing product focused on session clarity and reliable collaboration.",
-    stack: ["Next.js", "Stream", "Convex"],
-    image: "/arko-project-pulse_441dd742.jpg",
-    featured: "500+ concurrent users · 99.9% uptime · AES-256 encrypted media streaming.",
+    description: "A secure and real-time video interviewing platform focused on session clarity and reliable collaboration.",
+    stack: ["Next.js", "Tailwind CSS", "Stream API", "Convex", "Clerk"],
+    image: "/intervak.png",
+    featured: "Real-time encrypted video and audio streaming · Secure session management · User role support.",
+    link: "https://intervak-arkokundu2025.vercel.app/"
   },
 ];
 
 const achievements = [
   {
     index: "A1",
-    title: "700+ DSA problems solved",
-    detail: "Built disciplined problem-solving practice through contests, earning 3 stars on the GeeksforGeeks platform.",
+    title: "Coder",
+    detail: "Solved 700+ DSA problems on GeeksforGeeks with 3-star coder badge.Building and Testing projects with new technologies and reliable architecture.Focusing on MLOps and DevOps practices for real-world impact.",
   },
   {
     index: "A2",
-    title: "Community through code",
-    detail: "Facilitated five or more coding and API events as a GeeksforGeeks Campus Ambassador, reaching over 150 attendees.",
+    title: "Organizer",
+    detail: "Organized and facilitated our college hackathon - BINARY - 2025, an event that brought together 150+ students from various colleges to compete and showcase their innovative ideas.",
   },
   {
     index: "A3",
-    title: "Research and recognition",
+    title: "Researcher",
     detail: "Published research in computer science and engineering innovation, with AI, cloud, and data analytics certifications.",
   },
 ];
@@ -119,6 +122,16 @@ const education = [
   },
 ];
 
+const devTitles = [
+  "INDIAN SOFTWARE DEVELOPER",
+  "भारतीय सॉफ़्टवेयर डेवलपर",
+  "ভারতীয় সফটওয়্যার ডেভেলপার",
+  "भारतीय सॉफ्टवेअर डेव्हलपर",
+  "ભારતીય સોફ્ટવેર ડેવલપર",
+  "ಭಾರತೀಯ ಸಾಫ್ಟ್ವೇರ್ ಡೆವಲಪರ್",
+  "இந்திய மென்பொருள் உருவாக்குநர்",
+];
+
 const milestones = [
   {
     title: "Oracle Cloud Certified AI Foundations Associate",
@@ -127,10 +140,10 @@ const milestones = [
     type: "Certification",
   },
   {
-    title: "AI & Data Analytics Internship Certification",
-    issuer: "AICTE Virtual Internship",
-    date: "Dec 2024 – Jan 2025",
-    type: "Virtual Internship",
+    title: "JUNIOR SOFTWARE ENGINEER",
+    issuer: "Dynamic Pro Technology Solutions",
+    date: "Jan 2026 – Feb 2026",
+    type: "Internship",
   },
   {
     title: "TCS Codevita Season 13 Qualifier",
@@ -139,10 +152,10 @@ const milestones = [
     type: "Competition",
   },
   {
-    title: "700+ DSA Problems Solved & 3-Star Coder",
-    issuer: "GeeksforGeeks Contests",
-    date: "Ongoing",
-    type: "Achievement",
+    title: "Summer Intern at AAI",
+    issuer: "Gained comprehensive knowledge of Communication, Navigation, and Surveillance (CNS) systems critical to airport operations.",
+    date: "July 2025",
+    type: "Internship",
   },
 ];
 
@@ -198,6 +211,8 @@ export default function Home() {
   const [contactOpen, setContactOpen] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
   const [contactDraft, setContactDraft] = useState({ name: "", email: "", subject: "", message: "" });
+  const [titleIndex, setTitleIndex] = useState(0);
+  const [titleVisible, setTitleVisible] = useState(true);
   const { activeProject, resumeOpen, setActiveProject, setResumeOpen } = usePortfolioStore();
   const contactMutation = trpc.contact.send.useMutation({
     onSuccess: () => {
@@ -220,6 +235,22 @@ export default function Home() {
   useEffect(() => {
     const timer = window.setInterval(() => setNow(dayjs()), 1000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let timeoutId: number | undefined;
+    const intervalId = window.setInterval(() => {
+      setTitleVisible(false);
+      timeoutId = window.setTimeout(() => {
+        setTitleIndex((prev) => (prev + 1) % devTitles.length);
+        setTitleVisible(true);
+      }, 400);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
   }, []);
 
   useEffect(() => {
@@ -291,7 +322,7 @@ export default function Home() {
             <span className="companion-mouth" />
           </div>
         </div>
-        <span className="companion-caption">CURSOR / LINKED</span>
+        <span className="companion-caption">I CAN WATCH YOU</span>
       </div>
       <aside className="main-rail" aria-label="Primary navigation">
         <div>
@@ -300,7 +331,7 @@ export default function Home() {
             <span className="font-mono text-[.72rem] tracking-[.12em] text-[#f0eef8]">AK/DEV</span>
           </button>
           <div className="mt-16 flex flex-col">
-            {[["01", "WORK", "work"], ["02", "IMPACT", "impact"], ["03", "ABOUT", "about"], ["04", "EDUCATION", "education"], ["05", "CONTACT", "contact"]].map(([num, label, section]) => (
+            {[["01", "WORK", "work"], ["02", "PROFILE", "impact"], ["03", "ABOUT", "about"], ["04", "EDUCATION", "education"], ["05", "CONTACT", "contact"]].map(([num, label, section]) => (
               <button key={section} onClick={() => scrollToSection(section)} className="rail-link text-left">
                 <span>{num}</span>{label}
               </button>
@@ -308,7 +339,7 @@ export default function Home() {
           </div>
         </div>
         <div className="space-y-3 font-mono text-[.62rem] tracking-[.07em] text-[#817b96]">
-          <div className="flex items-center gap-2 text-[#a8a2bb]"><span className="h-1.5 w-1.5 rounded-full bg-[#a78bfa] shadow-[0_0_10px_#a78bfa]" />AVAILABLE FOR SELECT WORK</div>
+          <div className="flex items-center gap-2 text-[#a8a2bb]"><span className="h-1.5 w-1.5 rounded-full bg-[#a78bfa] shadow-[0_0_10px_#a78bfa]" />ALWAYS A DEV</div>
           <p>{now.format("DD MMM YYYY / HH:mm:ss")}</p>
         </div>
       </aside>
@@ -338,33 +369,40 @@ export default function Home() {
           <div className="relative mx-auto flex min-h-[min(800px,100svh)] max-w-[1500px] flex-col justify-between px-5 pb-7 pt-8 sm:px-8 lg:px-14 lg:pb-10 lg:pt-11">
             <div className="intro-reveal flex items-center justify-between font-mono text-[.62rem] tracking-[.12em] text-[#aea9be]">
               <span className="flex items-center gap-2"><img src="/arko-orbit-mark_4911fc05.png" alt="" className="h-4 w-4 object-contain" />PORTFOLIO / 2026</span>
-              <span className="hidden sm:block">SOFTWARE DEVELOPER</span>
+              <span className="hidden sm:block">NOT YOUR TYPE DEV</span>
             </div>
             <div className="max-w-5xl pb-12 pt-28 md:pb-24 md:pt-36">
-              <div className="intro-reveal section-kicker mb-7">INDIA · REMOTE · WORLDWIDE</div>
+              <div className="intro-reveal section-kicker mb-7">CORPORATE EMPLOYEE</div>
               <p className="intro-reveal friendly-tag">YOUR FRIENDLY NEIGHBOURHOOD DEVELOPER</p>
               <h1 id="hero-title" className="intro-reveal max-w-5xl text-[clamp(3.7rem,9vw,9.25rem)] font-semibold leading-[.83] tracking-[-.08em] text-[#f4f2fb]">
                 ARKO<br /><span className="font-normal italic text-[#c8c0ea]">KUNDU</span>
               </h1>
-              <div className="intro-reveal mt-6 flex items-center gap-3 font-mono text-[.61rem] tracking-[.12em] text-[#aaa4ba]">
-                <img src="/arko-orbit-mark_4911fc05.png" alt="Split orbital monogram" className="h-8 w-8 object-contain" />
-                SPLIT ORBITAL / PERSONAL SYSTEMS MARK
+              <div className="intro-reveal mt-6 flex min-h-[2rem] items-center gap-3 font-mono text-[.80rem] tracking-[.12em] text-[#aaa4ba]">
+                <img src="/arko-orbit-mark_4911fc05.png" alt="Split orbital monogram" className="h-8 w-8 shrink-0 object-contain" />
+                <span
+                  className={`transition-all duration-300 ease-in-out ${titleVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-1"
+                    }`}
+                >
+                  {devTitles[titleIndex]}
+                </span>
               </div>
               <div className="rule-reveal hairline mt-10 max-w-3xl" />
               <div className="intro-reveal mt-7 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
                 <p className="max-w-md text-[1.02rem] leading-relaxed text-[#c4c0d0] sm:text-[1.1rem]">
-                  I build lucid interfaces for complicated ideas—where product logic, code, and detail move in the same direction.
+                  I am an AI-driven software developer from India, skilled in Full-stack development,Data Science,Gen AI and Agentic AI, passionate about building scalable and intelligent solutions that solve real-world problems.
                 </p>
-                <button onClick={() => scrollToSection("work")} className="group inline-flex w-fit items-center gap-3 border border-[#a78bfa]/60 bg-[#a78bfa] px-4 py-3 font-mono text-[.68rem] tracking-[.1em] text-[#0b0911] transition hover:bg-[#c0abff] active:scale-[.97]">
-                  OPEN WORK INDEX <ArrowDownRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-1" />
+                <button onClick={() => scrollToSection("about")} className="group inline-flex w-fit items-center gap-3 border border-[#a78bfa]/60 bg-[#a78bfa] px-4 py-3 font-mono text-[.68rem] tracking-[.1em] text-[#0b0911] transition hover:bg-[#c0abff] active:scale-[.97]">
+                  KNOW ME BETTER <ArrowDownRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-y-1" />
                 </button>
               </div>
             </div>
             <div className="intro-reveal flex items-end justify-between gap-3">
               <p className="font-mono text-[.62rem] leading-relaxed tracking-[.09em] text-[#a5a0b4]">PRACTICAL SYSTEMS.<br />FRIENDLY BUILDER.</p>
-              <div ref={orbitRef} className="orbit-note relative z-10 w-[144px] rotate-[-5deg] border border-[#d8ccff]/70 bg-[#8b6de8] p-3 text-[#0c0a12] sm:w-[166px] sm:p-4" data-tooltip-id="drag-tip" data-tooltip-content="A movable work artifact.">
+              <div ref={orbitRef} className="orbit-note relative z-10 w-[144px] rotate-[-5deg] border border-[#d8ccff]/70 bg-[#8b6de8] p-3 text-[#0c0a12] sm:w-[166px] sm:p-4" data-tooltip-id="drag-tip" data-tooltip-content="You can DRAG me :)">
                 <div className="flex items-center justify-between font-mono text-[.57rem] font-medium tracking-[.08em]"><span>MOVE / 01</span><Move className="h-3.5 w-3.5" /></div>
-                <p className="mt-7 font-mono text-[.67rem] font-medium leading-snug">DRAG THIS<br />ORBIT NOTE</p>
+                <p className="mt-7 font-mono text-[.67rem] font-medium leading-snug">HELLO !!!<br />I am a Developer from भारत</p>
               </div>
             </div>
           </div>
@@ -376,10 +414,10 @@ export default function Home() {
           <div className="relative mx-auto max-w-[1500px]">
             <div className="flex flex-col justify-between gap-10 md:flex-row md:items-end">
               <div>
-                <div className="section-kicker">01 / SELECTED WORK</div>
-                <h2 id="work-title" className="mt-6 max-w-2xl text-5xl font-semibold leading-[.9] tracking-[-.06em] text-[#f2f0fa] sm:text-7xl">Three systems.<br /><span className="font-normal italic text-[#ada7c2]">One clear intent.</span></h2>
+                <div className="section-kicker">01 / PROJECT WORKS</div>
+                <h2 id="work-title" className="mt-6 max-w-2xl text-5xl font-semibold leading-[.9] tracking-[-.06em] text-[#f2f0fa] sm:text-7xl">Friendly Systems.<br /><span className="font-normal italic text-[#ada7c2]">Each having purpose.</span></h2>
               </div>
-              <p className="max-w-xs border-l border-[#a78bfa] pl-4 font-mono text-[.69rem] leading-relaxed tracking-[.04em] text-[#aaa4ba]">A selection of product spaces shaped around clarity, pace, and durable interaction patterns.</p>
+              <p className="max-w-xs border-l border-[#a78bfa] pl-4 font-mono text-[.69rem] leading-relaxed tracking-[.04em] text-[#aaa4ba]">A curated selection of full-stack applications, intelligent AI systems, and real-time platforms engineered for practical, real-world impact.</p>
             </div>
             <div className="mt-16 grid gap-x-6 gap-y-14 lg:grid-cols-3">
               {projects.map((project, index) => (
@@ -397,7 +435,15 @@ export default function Home() {
                     <p className="mt-3 max-w-sm text-[.91rem] leading-relaxed text-[#aaa5b6]">{activeProject === index ? project.featured : project.description}</p>
                     <div className="mt-5 flex flex-wrap items-center gap-2">
                       {project.stack.map((tech) => <span key={tech} className="border border-white/15 px-2 py-1 font-mono text-[.59rem] tracking-[.05em] text-[#b6b1c2]">{tech}</span>)}
-                      <button onClick={() => setActiveProject(index)} className="ml-auto inline-flex items-center gap-1 font-mono text-[.62rem] tracking-[.08em] text-[#d8d2ef] hover:text-[#a78bfa]">DETAIL <ExternalLink className="h-3 w-3" /></button>
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-auto inline-flex items-center gap-1 font-mono text-[.62rem] tracking-[.08em] text-[#d8d2ef] transition hover:text-[#a78bfa]"
+                        aria-label={`Open ${project.title} project link`}
+                      >
+                        DETAIL <ExternalLink className="h-3 w-3" />
+                      </a>
                     </div>
                   </div>
                 </article>
@@ -410,8 +456,8 @@ export default function Home() {
           <div className="section-axis hidden lg:block" aria-hidden="true" />
           <div className="mx-auto grid max-w-[1500px] gap-16 lg:grid-cols-[.9fr_1.1fr] lg:gap-24">
             <div>
-              <div className="section-kicker">02 / ACHIEVEMENTS</div>
-              <h2 id="impact-title" className="mt-6 text-5xl font-semibold leading-[.9] tracking-[-.06em] text-[#f2f0fa] sm:text-7xl">What I optimize<br /><span className="font-normal italic text-[#ada7c2]">for, always.</span></h2>
+              <div className="section-kicker">02 / Who do you think I am?</div>
+              <h2 id="impact-title" className="mt-6 text-5xl font-semibold leading-[.9] tracking-[-.06em] text-[#f2f0fa] sm:text-7xl">Let's get<br /><span className="font-normal italic text-[#ada7c2]">Friendly</span></h2>
               <div className="mt-12 border-y border-white/10 py-5">
                 <div className="flex items-center gap-3"><Sparkles className="h-4 w-4 text-[#a78bfa]" /><span className="font-mono text-[.63rem] tracking-[.1em] text-[#b7b1c6]">WORKING PRINCIPLES, NOT VANITY METRICS</span></div>
               </div>
@@ -436,7 +482,7 @@ export default function Home() {
           <div className="constellation absolute bottom-0 right-0 h-72 w-1/2 opacity-[.18]" />
           <div className="relative mx-auto grid max-w-[1500px] gap-14 lg:grid-cols-[1.2fr_.8fr] lg:items-end">
             <div>
-              <div className="section-kicker">03 / APPROACH</div>
+              <div className="section-kicker">03 / You can know me better here</div>
               <h2 id="about-title" className="mt-6 max-w-4xl text-5xl font-semibold leading-[.9] tracking-[-.065em] text-[#f2f0fa] sm:text-7xl">Useful things should feel <span className="font-normal italic text-[#bdb6d3]">obvious</span>—not oversimplified.</h2>
             </div>
             <div className="border-l border-[#a78bfa] pl-5 lg:mb-2">
@@ -457,7 +503,7 @@ export default function Home() {
                 <div className="section-kicker">04 / EDUCATION</div>
                 <h2 id="education-title" className="mt-6 text-5xl font-semibold leading-[.9] tracking-[-.06em] text-[#f2f0fa] sm:text-7xl">Built on <span className="font-normal italic text-[#bdb6d3]">curiosity</span><br />and continuity.</h2>
               </div>
-              <p className="max-w-xl border-l border-[#a78bfa] pl-5 text-lg leading-relaxed text-[#b8b2c5]">A technical foundation that moves from computer science fundamentals into electronics, communication, and applied software systems.</p>
+              <p className="max-w-xl border-l border-[#a78bfa] pl-5 text-lg leading-relaxed text-[#b8b2c5]">A graduate with a strong foundation moving from computer science fundamentals into electronics, communication, and applied software systems.</p>
             </div>
             <div className="education-timeline mt-16 grid gap-7 lg:grid-cols-2">
               {education.map((item) => (
@@ -485,7 +531,7 @@ export default function Home() {
                   </h3>
                 </div>
                 <p className="max-w-md font-mono text-[.66rem] leading-relaxed tracking-[.06em] text-[#a9a4b5]">
-                  Industry certifications, competitive programming ranks, and verified program accomplishments.
+                  Industry certifications,internships, competitive programming ranks, and verified program accomplishments.
                 </p>
               </div>
 
@@ -549,7 +595,7 @@ export default function Home() {
               </div>
             </div>
             <div className="mt-20 flex flex-col justify-between gap-3 border-t border-white/10 pt-5 font-mono text-[.6rem] tracking-[.08em] text-[#817b94] sm:flex-row">
-              <p className="flex items-center gap-2"><img src="/arko-orbit-mark_4911fc05.png" alt="" className="h-4 w-4 object-contain" />© {now.format("YYYY")} ARKO KUNDU. BUILT WITH INTENT.</p>
+              <p className="flex items-center gap-2"><img src="/arko-orbit-mark_4911fc05.png" alt="" className="h-4 w-4 object-contain" />© {now.format("YYYY")} ARKO KUNDU. NOT A BAD DEV.</p>
               <p className="flex items-center gap-2"><Code2 className="h-3 w-3" />REACT / GSAP / ZUSTAND / DAYJS</p>
             </div>
           </div>
@@ -575,7 +621,7 @@ export default function Home() {
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#050509]/85 px-3 py-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="contact-dialog-title">
           <div className="resume-dialog flex w-full max-w-xl flex-col overflow-hidden border border-white/20 bg-[#0c0c14] shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-              <div className="flex items-center gap-2 font-mono text-[.64rem] tracking-[.1em] text-[#bdb7ca]"><Mail className="h-3.5 w-3.5 text-[#a78bfa]" />MESSAGE_COMPOSER / 01</div>
+              <div className="flex items-center gap-2 font-mono text-[.64rem] tracking-[.1em] text-[#bdb7ca]"><Mail className="h-3.5 w-3.5 text-[#a78bfa]" />MESSAGE_COMPOSER</div>
               <button onClick={() => setContactOpen(false)} aria-label="Close message composer" className="flex h-8 w-8 items-center justify-center border border-white/15 text-[#d9d4e6] transition hover:border-[#a78bfa] hover:bg-[#a78bfa] hover:text-[#0c0a12]"><X className="h-4 w-4" /></button>
             </div>
             {messageSent ? (
@@ -589,9 +635,9 @@ export default function Home() {
             ) : (
               <form onSubmit={handleContactSubmit} className="p-5 sm:p-7">
                 <div className="mb-7">
-                  <p className="font-mono text-[.62rem] tracking-[.12em] text-[#a78bfa]">04 / CONTACT</p>
-                  <h2 id="contact-dialog-title" className="mt-3 text-3xl font-medium tracking-[-.05em] text-[#f1eef9]">Start with the context.</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-[#aaa4b7]">Share a little about the idea, the team, or the problem you are working through.</p>
+                  <p className="font-mono text-[.62rem] tracking-[.12em] text-[#a78bfa]">CONTACT ME</p>
+                  <h2 id="contact-dialog-title" className="mt-3 text-3xl font-medium tracking-[-.05em] text-[#f1eef9]">Let's get Connected.</h2>
+                  <p className="mt-2 text-sm leading-relaxed text-[#aaa4b7]">Share a little about your thoughts,maybe an idea, or discuss about anything.</p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block"><span className="font-mono text-[.59rem] tracking-[.1em] text-[#918a9f]">YOUR NAME</span><input required minLength={2} value={contactDraft.name} onChange={(event) => setContactDraft((draft) => ({ ...draft, name: event.target.value }))} className="mt-2 w-full border border-white/15 bg-[#11111a] px-3 py-3 text-sm text-[#eeeaf7] outline-none transition focus:border-[#a78bfa]" placeholder="Name" /></label>

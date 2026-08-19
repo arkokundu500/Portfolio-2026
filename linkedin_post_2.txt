@@ -1,0 +1,66 @@
+WEEKLY PROJECT CHALLENGE — WEEK 2
+
+Building a portfolio is not only about placing projects, skills, and links on one page. The real challenge is helping a visitor understand who you are, what you build, and how they can reach you—within a few seconds.
+
+For Week 2 of my Weekly Project Challenge, I built and refined my personal developer portfolio: a dark, interactive experience that presents my projects, education, achievements, résumé, and contact details in one focused system.
+
+THE PROBLEM
+
+Many developer portfolios look good but do not guide the visitor. A recruiter may have to search for the developer’s work, a collaborator may not know which technologies they use, and a potential client may have no simple way to start a conversation.
+
+Think about a hiring manager reviewing several portfolios in one sitting. They should be able to quickly answer four questions:
+
+1. Who is this developer?
+2. What kind of problems do they solve?
+3. What have they built?
+4. How can I contact them?
+
+This project turns those questions into a clear, interactive journey rather than a static list of information.
+
+REAL-WORLD EXAMPLE
+
+Imagine a startup founder looking for a developer to build an internal AI tool or a real-time web platform. Instead of reading a long résumé attachment first, they can explore project records such as a RAG-based Financial Chatbot, a Smart Doorbell Facial Verification System, and the INTERV-AK remote interview platform. They can then open the résumé preview or write a message directly from the website.
+
+KEY FEATURES
+
+• A dark, editorial portfolio interface built around an indexed technical-system style.
+• An interactive hero section with draggable three-dimensional artifacts.
+• Persistent rotating orbit objects that create a living visual environment.
+• A cursor-reactive terminal companion that follows the desktop pointer with its gaze.
+• Featured project records based on real work: RAG Financial Chatbot, Smart Doorbell Verification, and INTERV-AK.
+• An achievements section covering DSA practice, community work, research, and certifications.
+• A dedicated education timeline for Kalyani Government Engineering College and The Calcutta Technical School.
+• An in-browser résumé preview using React PDF.
+• An accessible contact popup with pending, error, and success states.
+• Secure contact-email delivery through a server-side Resend integration.
+• Responsive layouts and reduced-motion support for a more inclusive experience.
+
+TECH STACK
+
+Frontend: React, TypeScript, Tailwind CSS
+Motion and Interaction: GSAP, GSAP Draggable
+State Management: Zustand with Immer
+Date and Status Display: dayjs
+Tooltips and Icons: React Tooltip, Lucide React
+Résumé Rendering: React PDF
+Backend and API Layer: Express, tRPC, Zod
+Email Delivery: Resend
+Testing: Vitest
+
+WEEK 2 LEARNINGS
+
+1. Visual design is more effective when it supports navigation. The left-side index, labels, and technical records help visitors understand where they are in the portfolio.
+
+2. Animation needs a purpose. The draggable elements, rotating orbits, and cursor companion are not only decorative; they make the interface feel more alive and demonstrate interaction design skills.
+
+3. User-facing forms should never expose secrets. The contact form sends only visitor input to a server-side route, while the Resend API key remains protected on the server.
+
+4. Accessibility belongs in interactive design. Reduced-motion preferences, visible focus states, labelled dialogs, and non-blocking fixed assets are important details.
+
+5. Building a portfolio is also an exercise in product thinking. Every section must answer a visitor’s question and create a clear next step.
+
+This Week 2 project helped me combine frontend design, interaction engineering, backend integration, testing, and personal branding in one practical build.
+
+I would love to hear your thoughts: What makes a developer portfolio memorable and useful for you?
+
+#WeeklyProjectChallenge #Week2 #SoftwareDeveloper #ReactJS #TypeScript #TailwindCSS #GSAP #WebDevelopment #PortfolioWebsite #FullStackDevelopment #FrontendDevelopment #BuildInPublic
