@@ -645,7 +645,13 @@ export default function Home() {
                 </div>
                 <label className="mt-4 block"><span className="font-mono text-[.59rem] tracking-[.1em] text-[#918a9f]">SUBJECT</span><input required minLength={3} value={contactDraft.subject} onChange={(event) => setContactDraft((draft) => ({ ...draft, subject: event.target.value }))} className="mt-2 w-full border border-white/15 bg-[#11111a] px-3 py-3 text-sm text-[#eeeaf7] outline-none transition focus:border-[#a78bfa]" placeholder="What would you like to explore?" /></label>
                 <label className="mt-4 block"><span className="font-mono text-[.59rem] tracking-[.1em] text-[#918a9f]">MESSAGE</span><textarea required minLength={10} maxLength={3000} rows={5} value={contactDraft.message} onChange={(event) => setContactDraft((draft) => ({ ...draft, message: event.target.value }))} className="mt-2 w-full resize-y border border-white/15 bg-[#11111a] px-3 py-3 text-sm leading-relaxed text-[#eeeaf7] outline-none transition focus:border-[#a78bfa]" placeholder="A few lines are enough to start." /></label>
-                {contactMutation.isError && <p role="alert" className="mt-4 border-l border-red-400 pl-3 text-sm text-red-300">{contactMutation.error.message}</p>}
+                {contactMutation.isError && (
+                  <p role="alert" className="mt-4 border-l border-red-400 pl-3 text-sm text-red-300">
+                    {contactMutation.error.message.includes("JSON.parse")
+                      ? "Unable to connect to the email service. Please try again or check the server configuration."
+                      : contactMutation.error.message}
+                  </p>
+                )}
                 <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
                   <p className="max-w-[13rem] font-mono text-[.55rem] leading-relaxed tracking-[.06em] text-[#827b91]">DELIVERED SECURELY VIA RESEND</p>
                   <button type="submit" disabled={contactMutation.isPending} className="inline-flex shrink-0 items-center gap-2 border border-[#a78bfa] bg-[#a78bfa] px-4 py-3 font-mono text-[.63rem] tracking-[.09em] text-[#0c0a12] transition hover:bg-[#c0abff] disabled:cursor-wait disabled:opacity-60 active:scale-[.97]">{contactMutation.isPending ? "SENDING…" : "SEND MESSAGE"}<ArrowUpRight className="h-3.5 w-3.5" /></button>
