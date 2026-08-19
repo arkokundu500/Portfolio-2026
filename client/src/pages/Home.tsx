@@ -6,7 +6,6 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { getCompanionLook } from "@/lib/companionMotion";
-import { Document, Page, PDFViewer, StyleSheet, Text, View } from "@react-pdf/renderer";
 import dayjs from "dayjs";
 import { Draggable } from "gsap/Draggable";
 import { gsap } from "gsap";
@@ -158,44 +157,6 @@ const milestones = [
     type: "Internship",
   },
 ];
-
-const resumeStyles = StyleSheet.create({
-  page: { padding: 38, backgroundColor: "#0D0D14", color: "#F0EEF8", fontFamily: "Helvetica" },
-  kicker: { color: "#A78BFA", fontSize: 8, letterSpacing: 1.6, marginBottom: 10 },
-  name: { fontSize: 27, fontWeight: 700, marginBottom: 3 },
-  role: { color: "#B7B3C5", fontSize: 11, marginBottom: 20 },
-  line: { height: 1, backgroundColor: "#393547", marginBottom: 20 },
-  heading: { color: "#A78BFA", fontSize: 8, letterSpacing: 1.2, marginBottom: 8 },
-  body: { color: "#D8D5E4", fontSize: 9.4, lineHeight: 1.45, marginBottom: 15 },
-  meta: { color: "#9993AA", fontSize: 8, marginBottom: 3 },
-});
-
-function ResumeDocument() {
-  return (
-    <Document title="Arko Kundu — Resume" author="Arko Kundu">
-      <Page size="A4" style={resumeStyles.page}>
-        <Text style={resumeStyles.kicker}>ARKO KUNDU / RESUME</Text>
-        <Text style={resumeStyles.name}>Arko Kundu</Text>
-        <Text style={resumeStyles.role}>Your Friendly Neighbourhood Developer</Text>
-        <View style={resumeStyles.line} />
-        <Text style={resumeStyles.heading}>PROFILE</Text>
-        <Text style={resumeStyles.body}>Software developer building practical web, AI, and real-time product systems with an interest in thoughtful interfaces and reliable implementation.</Text>
-        <Text style={resumeStyles.heading}>EDUCATION</Text>
-        <Text style={resumeStyles.meta}>KALYANI GOVERNMENT ENGINEERING COLLEGE — SEP 2023 TO AUG 2026</Text>
-        <Text style={resumeStyles.body}>Bachelor of Technology, Electronics and Communication Engineering · CGPA 7.33</Text>
-        <Text style={resumeStyles.meta}>THE CALCUTTA TECHNICAL SCHOOL — JUN 2020 TO AUG 2023</Text>
-        <Text style={resumeStyles.body}>Diploma in Engineering and Technology, Computer Science and Technology · CGPA 8.70</Text>
-        <Text style={resumeStyles.heading}>SELECTED PROJECTS</Text>
-        <Text style={resumeStyles.meta}>RAG-BASED FINANCIAL CHATBOT WITH ACCESS CONTROL</Text>
-        <Text style={resumeStyles.body}>Role-specific Retrieval-Augmented Generation for five or more departments working across 500+ financial documents.</Text>
-        <Text style={resumeStyles.meta}>INTERV-AK — REMOTE INTERVIEW PLATFORM</Text>
-        <Text style={resumeStyles.body}>A secure video interview platform built with Next.js, Stream API, Clerk, and Convex.</Text>
-        <Text style={resumeStyles.heading}>CORE TOOLS</Text>
-        <Text style={resumeStyles.body}>Python · C++ · SQL · JavaScript · React · Next.js · Tailwind CSS · FastAPI · OpenCV · LangChain</Text>
-      </Page>
-    </Document>
-  );
-}
 
 function scrollToSection(section: string) {
   document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -607,12 +568,48 @@ export default function Home() {
 
       {resumeOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#050509]/85 px-3 py-5 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Arko Kundu resume preview">
-          <div className="resume-dialog flex h-[min(88vh,760px)] w-full max-w-3xl flex-col overflow-hidden border border-white/20 bg-[#0c0c14] shadow-2xl">
+          <div className="resume-dialog flex h-[min(90vh,860px)] w-full max-w-4xl flex-col overflow-hidden border border-white/20 bg-[#0c0c14] shadow-2xl">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-              <div className="flex items-center gap-2 font-mono text-[.64rem] tracking-[.1em] text-[#bdb7ca]"><BriefcaseBusiness className="h-3.5 w-3.5 text-[#a78bfa]" />ARKO_KUNDU_RESUME.PDF</div>
-              <button onClick={() => setResumeOpen(false)} aria-label="Close resume preview" className="flex h-8 w-8 items-center justify-center border border-white/15 text-[#d9d4e6] transition hover:border-[#a78bfa] hover:bg-[#a78bfa] hover:text-[#0c0a12]"><X className="h-4 w-4" /></button>
+              <div className="flex items-center gap-2 font-mono text-[.64rem] tracking-[.1em] text-[#bdb7ca]">
+                <BriefcaseBusiness className="h-3.5 w-3.5 text-[#a78bfa]" />
+                <span>ARKO_KUNDU_RESUME.PDF</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/ARKO_KUNDU_RESUME.pdf"
+                  download="ARKO_KUNDU_RESUME.pdf"
+                  className="inline-flex items-center gap-1.5 border border-white/15 px-3 py-1.5 font-mono text-[.6rem] tracking-[.08em] text-[#d8d2ef] transition hover:border-[#a78bfa] hover:bg-[#a78bfa] hover:text-[#0c0a12]"
+                  aria-label="Download resume PDF"
+                >
+                  <Download className="h-3 w-3" />
+                  <span>DOWNLOAD</span>
+                </a>
+                <a
+                  href="/ARKO_KUNDU_RESUME.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 border border-white/15 px-3 py-1.5 font-mono text-[.6rem] tracking-[.08em] text-[#d8d2ef] transition hover:border-[#a78bfa] hover:bg-[#a78bfa] hover:text-[#0c0a12]"
+                  aria-label="Open resume in new tab"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  <span className="hidden sm:inline">OPEN IN TAB</span>
+                </a>
+                <button
+                  onClick={() => setResumeOpen(false)}
+                  aria-label="Close resume preview"
+                  className="flex h-8 w-8 items-center justify-center border border-white/15 text-[#d9d4e6] transition hover:border-[#a78bfa] hover:bg-[#a78bfa] hover:text-[#0c0a12]"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-            <div className="min-h-0 flex-1 bg-[#06060b] p-2 sm:p-4"><PDFViewer width="100%" height="100%" className="border-0" showToolbar><ResumeDocument /></PDFViewer></div>
+            <div className="min-h-0 flex-1 bg-[#12111c] p-0">
+              <iframe
+                src="/ARKO_KUNDU_RESUME.pdf#toolbar=1&view=FitH"
+                className="h-full w-full border-0 bg-white"
+                title="Arko Kundu Resume PDF"
+              />
+            </div>
           </div>
         </div>
       )}
