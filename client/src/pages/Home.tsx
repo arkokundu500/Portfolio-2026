@@ -543,7 +543,7 @@ export default function Home() {
                 <div>
                   <p className="font-mono text-[.6rem] tracking-[.12em] text-[#8e889e]">LOCATION</p>
                   <p className="mt-2 flex items-center gap-2 text-sm text-[#d4cfdf]"><MapPin className="h-3.5 w-3.5 text-[#a78bfa]" />India</p>
-                  <a href="mailto:arkokundu500@gmail.com" className="mt-2 block text-sm text-[#bbb5c8] transition hover:text-[#a78bfa]">arkokundu500@gmail.com</a>
+                  <a href="mailto:arkokundu.tech@gmail.com" className="mt-2 block text-sm text-[#bbb5c8] transition hover:text-[#a78bfa]">arkokundu.tech@gmail.com</a>
                 </div>
                 <div>
                   <p className="font-mono text-[.6rem] tracking-[.12em] text-[#8e889e]">SOCIAL INDEX</p>
